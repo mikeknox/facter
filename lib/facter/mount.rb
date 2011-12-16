@@ -18,11 +18,18 @@ def enumerate_proc
   devices = []
 
   # Support for the following might not be of interest ...
-  exclude = %w( afs anon_inodefs aufs autofs bdev bind binfmt_.* cgroup cifs coda
-    cpuset debugfs devfs devpts ecryptfs fd ftpfs fuse.* gvfs.* hugetlbfs inotifyfs
-    iso9660 lustre.* mfs mqueue ncpfs NFS nfs.* none pipefs proc ramfs rootfs rpc_.*
-    securityfs shfs shm smbfs sockfs sysfs tmpfs udev udf unionfs usbfs 
-    mvfs ctfs lofs objfs mntfs)
+  exclude = []
+  if FileTest.exists?("/etc/facts.d/mounts/exclude.list") then
+    File.readlines("/etc/facts.d/mounts/exclude.list").each do |line|
+      exclude | line.split
+    end
+  else
+    exclude = %w( afs anon_inodefs aufs autofs bdev bind binfmt_.* cgroup cifs coda
+      cpuset debugfs devfs devpts ecryptfs fd ftpfs fuse.* gvfs.* hugetlbfs inotifyfs
+      iso9660 lustre.* mfs mqueue ncpfs NFS nfs.* none pipefs proc ramfs rootfs rpc_.*
+      securityfs shfs shm smbfs sockfs sysfs tmpfs udev udf unionfs usbfs 
+      mvfs ctfs lofs objfs mntfs)
+  end
 
   #
   # Modern Linux and Solaris kernels provide "/proc/mounts" in the following format:
