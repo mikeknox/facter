@@ -86,7 +86,7 @@ def enumerate_proc
   if Facter.value(:kernel) == "SunOS" then
     mounttab = '/etc/mnttab'
   end
-  Facter::Util::Resolution.exec("cat #{mounttab} 2>/tmp/blah ").each_line do |line|
+  Facter::Util::Resolution.exec("cat #{mounttab} 2>/dev/null").each_line do |line|
     # Remove bloat ...
     line.strip!
 
