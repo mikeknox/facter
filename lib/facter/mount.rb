@@ -21,10 +21,11 @@ def enumerate_proc
   exclude = %w( afs anon_inodefs aufs autofs bdev bind binfmt_.* cgroup cifs coda
     cpuset debugfs devfs devpts ecryptfs fd ftpfs fuse.* gvfs.* hugetlbfs inotifyfs
     iso9660 lustre.* mfs mqueue ncpfs NFS nfs.* none pipefs proc ramfs rootfs rpc_.*
-    securityfs shfs shm smbfs sockfs sysfs tmpfs udev udf unionfs usbfs )
+    securityfs shfs shm smbfs sockfs sysfs tmpfs udev udf unionfs usbfs 
+    mvfs ctfs lofs objfs mntfs)
 
   #
-  # Modern Linux kernels provide "/proc/mounts" in the following format:
+  # Modern Linux and Solaris kernels provide "/proc/mounts" in the following format:
   #
   #   rootfs / rootfs rw 0 0
   #   none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
@@ -74,7 +75,11 @@ def enumerate_proc
   # This is due to some problems with IO#read in Ruby and reading content of
   # the "proc" file system that was reported more than once in the past ...
   #
-  Facter::Util::Resolution.exec("cat /proc/mounts 2> /dev/null").each_line do |line|
+  mounttab='/proc/mounts'
+  if Facter.value(:kernel) == "SunOS" then
+    mounttab = '/etc/mnttab'
+  end
+  Facter::Util::Resolution.exec("cat #{mounttab} 2>/tmp/blah ").each_line do |line|
     # Remove bloat ...
     line.strip!
 
@@ -115,11 +120,11 @@ def enumerate_proc
 end
 
 Facter.add('mount_devices') do
-  confine :kernel => :linux
+  confine :kernel => [:linux, :sunos]
   setcode { enumerate_proc[0].sort.uniq.join(',') }
 end
 
 Facter.add('mount_points') do
-  confine :kernel => :linux
+  confine :kernel => [:linux, :sunos]
   setcode { enumerate_proc[1].uniq.join(',') }
 end
