@@ -99,6 +99,7 @@ def enumerate_proc
     # At this point we split single and valid row into tokens ...
     row = line.split(' ')
 
+    #
     # Only device and mount point are of interest ...
     #
     # When there are any spaces in the mount point name then Kernel will
