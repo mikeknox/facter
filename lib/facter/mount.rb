@@ -51,8 +51,8 @@ def enumerate_proc
   #   binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0
   #
 
-  # Make regular expression from our patterns ...
-  exclude = Regexp.union(exclude.collect { |i| Regexp.new(i) })
+  # Make regular expression form our patterns ...
+  exclude = Regexp.union(*exclude.collect { |i| Regexp.new(i) })
 
   # List of numeric identifiers with their corresponding canonical forms ...
   known_devices = Dir.glob('/dev/*').inject({}) do |k,v|
